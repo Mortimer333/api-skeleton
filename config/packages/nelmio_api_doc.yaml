@@ -1,0 +1,25 @@
+nelmio_api_doc:
+    areas:
+        path_patterns: # an array of regexps (document only routes under /api, except /api/doc)
+            - ^/_(?!/doc$)
+        name_patterns: # document only routes with a name of the form api_*
+            - ^api\_
+    documentation:
+        info:
+            title: Board Meister Internal API
+            description:
+            version: 0.0.1
+        security:
+            - Bearer: []
+            - SkipCRSF: []
+        components:
+            securitySchemes:
+                Bearer:
+                    type: http
+                    scheme: bearer
+                    bearerFormat: JWT
+                SkipCRSF:
+                    type: apiKey
+                    in: header
+                    name: X-Swagger
+                    description: Skip CRSF verification when using swagger (set to any value)

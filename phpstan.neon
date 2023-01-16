@@ -1,0 +1,17 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+parameters:
+    checkGenericClassInNonGenericObjectType: false
+    level: 8
+    excludePaths:
+      - tests/_*/
+      - src/Model/
+    ignoreErrors:
+      - '#unknown class App\\Tests\\UnitTester#'
+#      - '#invalid type App\\Tests\\UnitTester#'
+      - '#unknown class App\\Tests\\IntegrationTester#'
+#      - '#invalid type App\\Tests\\IntegrationTester#'
+      - '#unknown class App\\Tests\\ApiTester#'
+      - '#invalid type App\\Tests\\ApiTester#'
+#      - '#does not accept PHPUnit\\Framework\\MockObject\\MockObject#'
+      - '#Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable#'

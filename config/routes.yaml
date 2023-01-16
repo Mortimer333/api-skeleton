@@ -1,0 +1,25 @@
+controllers:
+    resource:
+        path: ../src/Controller/
+        namespace: App\Controller
+    type: attribute
+    prefix: '/_'
+api.user.controllers:
+    resource: ../src/Controller/User
+    type: attribute
+    prefix: '/_/user'
+api.user.super.controllers:
+    resource: ../src/Controller/Admin
+    type: attribute
+    prefix: '/_/user/super'
+app.swagger_ui:
+    path: /api/doc
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger_ui }
+app.swagger:
+    path: /api/v1/doc.json
+    methods: GET
+    defaults: { _controller: nelmio_api_doc.controller.swagger }
+app_user_logout:
+    path: /_/user/logout
+    methods: GET

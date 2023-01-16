@@ -1,0 +1,20 @@
+jose:
+    nested_token:
+        loaders:
+            main:
+                signature_algorithms: ['%env(resolve:JWT_SINGNATURE_ALGORITHM)%']
+                key_encryption_algorithms: ['%env(resolve:JWT_ENCRYTPION_ALGORITHM)%']
+                content_encryption_algorithms: ['%env(resolve:JWT_CONTENT_ENCRYTPION_ALGORITHM)%']
+                jws_serializers: ['jws_compact']
+                jws_header_checkers: ['exp', 'iat', 'nbf']
+                jwe_serializers: ['jwe_compact']
+                jwe_header_checkers: ['exp', 'iat', 'nbf']
+                is_public: true
+        builders:
+            main:
+                signature_algorithms: ['%env(resolve:JWT_SINGNATURE_ALGORITHM)%']
+                key_encryption_algorithms: ['%env(resolve:JWT_ENCRYTPION_ALGORITHM)%']
+                content_encryption_algorithms: ['%env(resolve:JWT_CONTENT_ENCRYTPION_ALGORITHM)%']
+                jws_serializers: ['jws_compact']
+                jwe_serializers: ['jwe_compact']
+                is_public: true

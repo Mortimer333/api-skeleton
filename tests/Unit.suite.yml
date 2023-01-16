@@ -1,0 +1,14 @@
+# Codeception Test Suite Configuration
+#
+# Suite for unit or integration tests.
+
+actor: UnitTester
+modules:
+    enabled:
+        - Asserts
+        - \App\Tests\Helper\Unit
+        - Symfony:
+            app_path: 'src'
+            environment: 'test'
+        - \App\Tests\Helper\SerializedData
+        - \App\Tests\Helper\Shared
