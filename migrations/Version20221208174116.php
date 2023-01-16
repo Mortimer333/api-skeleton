@@ -29,7 +29,7 @@ final class Version20221208174116 extends AbstractMigration
                 firstname VARCHAR(255) DEFAULT NULL, 
                 surname VARCHAR(255) DEFAULT NULL,
                 is_super TINYINT(1) DEFAULT NULL,
-                PRIMARY KEY(id),
+                PRIMARY KEY(id)
             ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
     }
 

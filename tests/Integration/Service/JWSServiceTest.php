@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Service;
 
-use App\Entity\Admin;
+use App\Entity\User;
 use App\Service\JWSService;
 use App\Tests\Integration\BaseIntegrationAbstract;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -23,7 +23,7 @@ class JWSServiceTest extends BaseIntegrationAbstract
         $jwsService = $this->getService(JWSService::class);
         $token = null;
         if ($createToken) {
-            $user = $this->createMock(Admin::class);
+            $user = $this->createMock(User::class);
             $user->method('getId')
                 ->willReturn($tokenUserId);
             $user->method('getUserIdentifier')

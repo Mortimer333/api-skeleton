@@ -19,6 +19,7 @@ abstract class BaseCestAbstract
 
     public function _before(ApiTester $I): void
     {
+        $this->toRemove = [];
         $httpUtilService = $I->getService(HttpUtilService::class);
         $httpUtilService->clearErrors();
         $I->haveHttpHeader('Content-Type', 'application/json');

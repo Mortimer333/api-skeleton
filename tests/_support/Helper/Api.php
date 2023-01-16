@@ -15,7 +15,6 @@ use PHPUnit\Framework\ExpectationFailedException;
 
 class Api extends \Codeception\Module
 {
-
     /**
      * @throws ExternalUrlException|ModuleException
      */

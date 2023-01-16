@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Entity\Deploy\DeployAction;
 use App\Service\Util\BinUtilService;
 use Symfony\Component\Process\Process;
 

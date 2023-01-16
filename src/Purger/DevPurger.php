@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Purger;
 
-use App\Entity\Deploy\DeployStatus;
 use Doctrine\DBAL\Connection;
 
 class DevPurger extends AbstractPurger

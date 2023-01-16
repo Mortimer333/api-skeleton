@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Tests\Api;
 
-use App\Contract\SuperUserInterface;
 use App\Entity\User;
 use App\Service\Helper\TestHelper;
 use App\Tests\ApiTester;
@@ -115,6 +114,12 @@ class RegisterCest extends BaseCestAbstract
         verify(count($response['errors']))->equals(1, 'Response contains 1 errors');
     }
 
+    protected function addAdminToRemove(ApiTester $I, string $email): void
+    {
+        $user = $I->getEm()->getRepository(User::class)->findOneBy(['email' => $email]);
+        $this->addToRemove($user);
+    }
+
     /**
      * @return array<mixed>
      */
@@ -126,14 +131,21 @@ class RegisterCest extends BaseCestAbstract
         ?string $firstname = null,
         ?string $lastName = null
     ): array {
+        $username = $username ?? $this->fake['username'];
         $response = $I->request('/register', 'POST', parameters: [
-            'username' => $username ?? $this->fake['username'],
+            'username' => $username,
             'password' => $password ?? $this->fake['password'],
             'passwordRepeat' => $passwordRepeat ?? ($password ?? $this->fake['passwordRepeat']),
             'firstname' => $firstname ?? $this->fake['firstName'],
             'surname' => $lastName ?? $this->fake['lastName'],
         ]);
 
-        return json_decode($response, true);
+        $response = json_decode($response, true);
+
+        if (((bool) $response['success']) === true) {
+            $this->addAdminToRemove($I, $username);
+        }
+
+        return $response;
     }
 }

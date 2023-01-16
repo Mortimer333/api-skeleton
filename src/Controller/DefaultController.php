@@ -7,6 +7,7 @@ namespace App\Controller;
 use App\Contract\NotDoubleSubmitAuthenticatedController;
 use App\Contract\NotTokenAuthenticatedController;
 use App\Service\Util\HttpUtilService;
+use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;

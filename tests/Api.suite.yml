@@ -7,7 +7,7 @@ modules:
             environment: 'test'
         - Doctrine2:
             depends: Symfony
-            # cleanup: true
+            cleanup: true
         - \App\Tests\Helper\Api
         - DataFactory:
             depends: Doctrine2

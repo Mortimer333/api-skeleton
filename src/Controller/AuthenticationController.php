@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Contract\NotTokenAuthenticatedController;
 use App\Entity\User;
 use App\Model\Body\LoginDto;
 use App\Model\Body\RegisterDto;
@@ -26,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 
 #[SWG\Tag('Authentication')]
-class AuthenticationController extends AbstractController
+class AuthenticationController extends AbstractController implements NotTokenAuthenticatedController
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,

@@ -8,9 +8,6 @@ namespace App\Tests\Integration;
 
 use App\Tests\IntegrationTester;
 use Codeception\Test\Unit;
-use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry;
 
 class BaseIntegrationAbstract extends Unit
 {

@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Constraint\Deploy\DeployBodyConstraint;
-use App\Entity\Deploy\Deploy;
-use App\Repository\Deploy\DeployRepository;
 use App\Service\Util\HttpUtilService;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -15,7 +12,6 @@ class ValidationService
 {
     public function __construct(
         protected HttpUtilService $httpUtilService,
-        protected DeployRepository $deployRepository,
         protected ValidatorInterface $validator,
     ) {
     }

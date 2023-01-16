@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Tests\Integration\Service\Util;
+namespace App\Tests\Integration\Service;
 
-use App\Entity\Deploy\Deploy;
-use App\Repository\Deploy\DeployRepository;
 use App\Service\Util\HttpUtilService;
 use App\Service\ValidationService;
 use App\Tests\Integration\BaseIntegrationAbstract;
@@ -14,7 +12,6 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class ValidateServiceTest extends BaseIntegrationAbstract
 {
     protected HttpUtilService $httpUtilService;
-    protected DeployRepository $deployRepository;
     protected ValidatorInterface $validator;
     protected ValidationService $validationService;
 
@@ -22,12 +19,10 @@ class ValidateServiceTest extends BaseIntegrationAbstract
     {
         parent::_before();
         $this->httpUtilService = $this->getService(HttpUtilService::class);
-        $this->deployRepository = $this->getService(DeployRepository::class);
         $this->validator = $this->getService(ValidatorInterface::class);
 
         $this->validationService = new ValidationService(
             $this->httpUtilService,
-            $this->deployRepository,
             $this->validator,
         );
 

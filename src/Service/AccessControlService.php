@@ -22,7 +22,7 @@ class AccessControlService
 
     public function validate(object $controller, Request $request): void
     {
-        if (!preg_match('/^\/(_\/(admin|login))/', $request->getPathInfo())) {
+        if (!preg_match('/^\/(_\/(user|login))/', $request->getPathInfo())) {
             return;
         }
 
@@ -33,7 +33,7 @@ class AccessControlService
 
     protected function validateRoutesAccess(string $path): void
     {
-        if (preg_match('/^\/(_\/admin)/', $path)) {
+        if (preg_match('/^\/(_\/user)/', $path)) {
             /** @var ?User $user */
             $user = $this->security->getUser();
             if (null === $user) {
@@ -44,7 +44,7 @@ class AccessControlService
                 throw new AccessDeniedHttpException('You need to be admin in to access this resource');
             }
 
-            if (preg_match('/^\/(_\/admin\/super)/', $path) && !$this->security->isGranted('ROLE_SUPER_ADMIN')) {
+            if (preg_match('/^\/(_\/user\/super)/', $path) && !$this->security->isGranted('ROLE_SUPER_ADMIN')) {
                 throw new AccessDeniedHttpException('You need to be super admin in to access this resource');
             }
         }

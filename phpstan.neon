@@ -14,4 +14,4 @@ parameters:
       - '#unknown class App\\Tests\\ApiTester#'
       - '#invalid type App\\Tests\\ApiTester#'
 #      - '#does not accept PHPUnit\\Framework\\MockObject\\MockObject#'
-      - '#Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable#'
+#      - '#Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable#'
