@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[SWG\Tag('Health check')]
 class DefaultController extends AbstractController implements
     NotTokenAuthenticatedController,
     NotDoubleSubmitAuthenticatedController
@@ -20,7 +21,7 @@ class DefaultController extends AbstractController implements
     ) {
     }
 
-    #[Route('/', name: 'app', methods: 'GET')]
+    #[Route('/', name: 'api_app', methods: 'GET')]
     public function index(): JsonResponse
     {
         return $this->httpUtilService->jsonResponse('Blueprint');

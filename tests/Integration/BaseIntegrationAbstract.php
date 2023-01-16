@@ -19,6 +19,17 @@ class BaseIntegrationAbstract extends Unit
     /** @var array<int, object> $toRemove */
     protected array $toRemove = [];
 
+    protected function getService(string $class) // @phpstan-ignore-line
+    {
+        $service = $this->tester->getService($class);
+
+        if (!$service) {
+            throw new \Exception($class . " doesn't exist as a service");
+        }
+
+        return $service;
+    }
+
     protected function addToRemove(object $entity): void
     {
         $this->toRemove[] = $entity;

@@ -4,7 +4,7 @@
 /.env.local.php
 /.env.*.local
 /config/secrets/*
-/public/bundles_backup/
+/public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
