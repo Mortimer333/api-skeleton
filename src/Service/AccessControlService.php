@@ -52,7 +52,7 @@ class AccessControlService
 
     protected function validateTokenExists(object $controller, Request $request): void
     {
-        // Making sure that user will be verified by custom authorizator
+        // Making sure that user will be verified by custom authorization
         if (
             !$controller instanceof NotTokenAuthenticatedController
             && !$request->headers->get('authorization')
@@ -66,19 +66,19 @@ class AccessControlService
         $content = json_decode($request->getContent(), true);
 
         $res = ( // If Swagger request
-            (
-                $this->baseUtilService->isDev()
-                && !$request->headers->get('X-Swagger')
+                (
+                    $this->baseUtilService->isDev()
+                    && !$request->headers->get('X-Swagger')
+                )
+                || !$this->baseUtilService->isDev()
             )
-            || !$this->baseUtilService->isDev()
-        )
-        && !$controller instanceof NotDoubleSubmitAuthenticatedController
-        && !in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])
-        && (
-            !$request->headers->get('x-csrf-token')
-            || !isset($content['CSRF-Token'])
-            || $request->headers->get('x-csrf-token') !== $content['CSRF-Token']
-        );
+            && !$controller instanceof NotDoubleSubmitAuthenticatedController
+            && !in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])
+            && (
+                !$request->headers->get('x-csrf-token')
+                || !isset($content['CSRF-Token'])
+                || $request->headers->get('x-csrf-token') !== $content['CSRF-Token']
+            );
 
         if ($res) {
             throw new AccessDeniedHttpException('CSRF attack');

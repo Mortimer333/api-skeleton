@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Checker\JTIChecker;
 use App\Entity\User;
 use App\Service\Util\BinUtilService;
 use App\Service\Util\HttpUtilService;
@@ -34,7 +33,6 @@ class JWSService extends JWTServiceAbstract
     public function __construct(
         protected AlgorithmManagerFactory $algorithmManagerFactory,
         protected CacheItemPoolInterface $cache,
-        protected JTIChecker $jtiChecker,
         protected BinUtilService $baseUtilService,
         protected HttpUtilService $httpUtilService,
     ) {
@@ -86,7 +84,6 @@ class JWSService extends JWTServiceAbstract
                 new ExpirationTimeChecker($this->httpUtilService->getTokenExpTimeSeconds(), $protectedHeaderOnly),
                 new IssuedAtChecker(0, $protectedHeaderOnly),
                 new IssuerChecker([self::ISSUER], $protectedHeaderOnly),
-                $this->jtiChecker,
             ],
             [
                 new JWSTokenSupport(),

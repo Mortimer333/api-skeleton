@@ -12,14 +12,27 @@ class TestPurger extends AbstractPurger
     {
         /** @var Connection $connection */
         $connection = $this->em->getConnection();
-
-        $connection->beginTransaction();
+        $transactionWasActive = false;
+        if ($connection->isTransactionActive()) {
+            $transactionWasActive = true;
+            $connection->commit();
+        }
 
         foreach ($this->em->getMetadataFactory()->getAllMetadata() as $entity) {
+            $cmd = $this->em->getClassMetadata($entity->getName());
+
+            // Clear ManyToMany tables
+            foreach ($cmd->getAssociationMappings() as $associationMapping) {
+                if ($associationMapping['joinTable']['name'] ?? false) {
+                    $this->truncateTable($associationMapping['joinTable']['name']);
+                }
+            }
+
             $this->truncate($entity->getName());
         }
 
-        $connection->commit();
-        $connection->beginTransaction();
+        if ($transactionWasActive) {
+            $connection->beginTransaction();
+        }
     }
 }

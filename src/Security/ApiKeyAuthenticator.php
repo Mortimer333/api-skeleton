@@ -46,7 +46,6 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 
         $payload = $this->jwsService->validateAndGetPayload($apiToken);
         $request->attributes->set('_token_payload', $payload);
-        BinUtilService::logToTest($payload);
 
         return new SelfValidatingPassport(new UserBadge($payload['user']));
     }
