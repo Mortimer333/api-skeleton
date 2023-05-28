@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 
 abstract class AbstractPurger implements ORMPurgerInterface
 {
+    public const SKIP = [];
     protected EntityManagerInterface $em;
 
     public function setEntityManager(EntityManagerInterface $em): void
@@ -27,6 +28,15 @@ abstract class AbstractPurger implements ORMPurgerInterface
         /** @var ClassMetadata $cmd */
         $cmd = $this->em->getClassMetadata($className);
 
+        $this->truncateTable($cmd->getTableName());
+    }
+
+    protected function truncateTable(string $table): void
+    {
+        if (in_array($table, self::SKIP)) {
+            return;
+        }
+
         /** @var Connection $connection */
         $connection = $this->em->getConnection();
 
@@ -34,7 +44,7 @@ abstract class AbstractPurger implements ORMPurgerInterface
         $dbPlatform = $connection->getDatabasePlatform();
 
         $connection->query('SET FOREIGN_KEY_CHECKS=0');
-        $q = $dbPlatform->getTruncateTableSql($cmd->getTableName());
+        $q = $dbPlatform->getTruncateTableSql($table);
         $connection->executeStatement($q);
         $connection->query('SET FOREIGN_KEY_CHECKS=1');
     }
