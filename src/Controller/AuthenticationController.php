@@ -13,6 +13,7 @@ use App\Model\Response\Authentication\RegistrationFailedDTO;
 use App\Model\Response\Authentication\RegistrationResponseDTO;
 use App\Model\Response\Authentication\UnauthorizedResponseDTO;
 use App\Service\JWSService;
+use App\Service\User\UserManageService;
 use App\Service\Util\BinUtilService;
 use App\Service\Util\HttpUtilService;
 use App\Service\ValidationService;
@@ -20,11 +21,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as SWG;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
 
 #[SWG\Tag('Authentication')]
 class AuthenticationController extends AbstractController implements NotTokenAuthenticatedController
@@ -32,6 +32,7 @@ class AuthenticationController extends AbstractController implements NotTokenAut
     public function __construct(
         protected HttpUtilService $httpUtilService,
         protected BinUtilService $baseUtilService,
+        protected UserManageService $userManageService,
     ) {
     }
 
@@ -49,7 +50,6 @@ class AuthenticationController extends AbstractController implements NotTokenAut
     )]
     public function register(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
         ManagerRegistry $doctrine,
         ValidationService $validationService,
     ): JsonResponse {
@@ -80,22 +80,7 @@ class AuthenticationController extends AbstractController implements NotTokenAut
             throw new \InvalidArgumentException('Registration attempt failed', 400);
         }
 
-        $user = new User();
-        $plainPassword = $parameters['password'];
-
-        $hashedPassword = $passwordHasher->hashPassword(
-            $user,
-            $plainPassword
-        );
-
-        $user->setEmail($parameters['username'])
-            ->setPassword($hashedPassword)
-            ->setFirstname($parameters['firstname'])
-            ->setSurname($parameters['surname'])
-        ;
-
-        $entity->persist($user);
-        $entity->flush();
+        $this->userManageService->create($parameters);
 
         return $this->httpUtilService->jsonResponse('User registered');
     }

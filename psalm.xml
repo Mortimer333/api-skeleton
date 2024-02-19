@@ -8,13 +8,13 @@
 >
     <projectFiles>
         <directory name="src" />
-        <directory name="tests"/>
+        <directory name="Tests"/>
         <ignoreFiles>
             <directory name="vendor" />
-            <directory name="tests/_data" />
-            <directory name="tests/_output" />
-            <directory name="tests/_support/_generated" />
-            <file name="tests/bootstrap.php" />
+            <directory name="Tests/_data" />
+            <directory name="Tests/_output" />
+            <directory name="Tests/Support/_generated" />
+            <file name="Tests/bootstrap.php" />
         </ignoreFiles>
     </projectFiles>
 </psalm>

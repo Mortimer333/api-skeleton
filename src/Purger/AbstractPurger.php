@@ -43,9 +43,9 @@ abstract class AbstractPurger implements ORMPurgerInterface
         /** @var AbstractPlatform $dbPlatform */
         $dbPlatform = $connection->getDatabasePlatform();
 
-        $connection->query('SET FOREIGN_KEY_CHECKS=0');
+        $connection->executeQuery('SET FOREIGN_KEY_CHECKS=0');
         $q = $dbPlatform->getTruncateTableSql($table);
         $connection->executeStatement($q);
-        $connection->query('SET FOREIGN_KEY_CHECKS=1');
+        $connection->executeQuery('SET FOREIGN_KEY_CHECKS=1');
     }
 }

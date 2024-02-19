@@ -23,11 +23,11 @@ abstract class JWTServiceAbstract
      */
     public function getKeys(): array
     {
-        if (!isset($_ENV['JWT_KEYS_ENCRIPTION']) || !isset($_ENV['JWT_KEYS_SIGNATURE'])) {
+        if (!isset($_ENV['JWT_KEYS_ENCRYPTION']) || !isset($_ENV['JWT_KEYS_SIGNATURE'])) {
             throw new \InvalidArgumentException('JWT keys are not set in environment', 500);
         }
         $signatureKeySet = JWKSet::createFromJson($_ENV['JWT_KEYS_SIGNATURE']);
-        $encryptionKeySet = JWKSet::createFromJson($_ENV['JWT_KEYS_ENCRIPTION']);
+        $encryptionKeySet = JWKSet::createFromJson($_ENV['JWT_KEYS_ENCRYPTION']);
 
         if (!$signatureKeySet->has('sig-main') || !$encryptionKeySet->has('enc-main')) {
             throw new \InvalidArgumentException("JWT keys don't have required IDs set", 500);
@@ -49,11 +49,11 @@ abstract class JWTServiceAbstract
      *
      * @return array<mixed>
      */
-    public function addRequiredToHeader(array $header): array
+    public function addRequiredToHeader(int $userId, array $header): array
     {
         return array_merge([
             'alg' => $header['alg'] ?? throw new \Exception('Missing algorithm header in token', 500),
-            'jti' => $header['jti'] ?? $this->createJTI(),
+            'jti' => $header['jti'] ?? $this->createJTI($userId),
             'iss' => $header['iss'] ?? self::ISSUER,
             'aud' => $header['aud'] ?? self::AUDIENCE,
             'iat' => $header['iat'] ?? time(),
@@ -62,27 +62,9 @@ abstract class JWTServiceAbstract
         ], $header);
     }
 
-    public function createJTI(): string
+    public function createJTI(int $userId): string
     {
-        $jtiItem = $this->cache->getItem($this->getLastJTIKey());
-        $jti = 1;
-        if ($jtiItem->isHit()) {
-            $jti = $jtiItem->get() + 1;
-        }
-
-        $jtiItem->set($jti)
-        ->expiresAfter($this->httpUtilService->getTokenExpTimeSeconds())
-        ;
-        $this->cache->save($jtiItem);
-
-        $token = $this->baseUtilService->generateToken() . $jti;
-        $jtiTokenItem = $this->cache->getItem($token)
-        ->set('true')
-        ->expiresAfter($this->httpUtilService->getTokenExpTimeSeconds())
-        ;
-        $this->cache->save($jtiTokenItem);
-
-        return $token;
+        return 'api_' . $this->baseUtilService->generateUniqueToken((string) $userId);
     }
 
     public function validateAlgorithmEnvsExist(): void

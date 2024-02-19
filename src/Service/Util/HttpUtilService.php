@@ -88,6 +88,10 @@ class HttpUtilService
             $errors[$path[$caret]] = [];
         }
 
+        if (is_string($errors[$path[$caret]])) {
+            return;
+        }
+
         self::createErrorPath($error, $path, $errors[$path[$caret]], $caret + 1);
     }
 
@@ -120,10 +124,10 @@ class HttpUtilService
     public function getTokenExpTimeSeconds(): int
     {
         if ($this->binUtilService->isDev()) {
-            return self::TOKEN_EXP_TIME_DEV_SECONDS;
+            return static::TOKEN_EXP_TIME_DEV_SECONDS;
         }
 
-        return self::TOKEN_EXP_TIME_SECONDS;
+        return static::TOKEN_EXP_TIME_SECONDS;
     }
 
     /**
@@ -185,30 +189,25 @@ class HttpUtilService
         return $statuses[$status] ?? false;
     }
 
-    public function getProperResponseFromException(\Throwable $exception): JsonResponse
+    public function getStatusCode(\Throwable $exception): int
     {
-        // Customize your response object to display the exception details
-        $response = new Response();
-
         // HttpExceptionInterface is a special type of exception that
         // holds status code and header details
         if ($exception instanceof HttpExceptionInterface) {
-            $response->setStatusCode($exception->getStatusCode());
-            $response->headers->replace($exception->getHeaders());
-        } else {
-            $statusCode = self::validateHttpStatus($exception->getCode())
-                ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
-            $response->setStatusCode((int) $statusCode);
+            return $exception->getStatusCode();
         }
 
-        $message = $exception->getMessage() ?: 'No message';
+        return self::validateHttpStatus($exception->getCode())
+            ? $exception->getCode() : Response::HTTP_INTERNAL_SERVER_ERROR;
+    }
 
-        // sends the modified response object to the event
+    public function getProperResponseFromException(\Throwable $exception): JsonResponse
+    {
         return self::jsonResponse(
-            message: $message,
-            status: $response->getStatusCode() ?: 500,
+            message: $exception->getMessage() ?: 'No message',
+            status: $this->getStatusCode($exception),
             success: false,
-            errors: self::getErrors()
+            errors: self::getErrors(),
         );
     }
 
@@ -217,12 +216,27 @@ class HttpUtilService
      */
     public function getBody(Request $request): array
     {
-        /** @var string $content */
-        $content = $request->getContent();
-
+        if ('GET' === $request->getMethod()) {
+            parse_str($request->getQueryString() ?: '', $body);
+            foreach ($body as $i => $item) {
+                $body[$i] = $item = is_array($item) ? $item : json_decode($item, true);
+                // Fix for Swagger double encoding query arrays
+                if (is_array($item)) {
+                    foreach ($item as $k => $subItem) {
+                        if (!is_string($subItem)) {
+                            continue;
+                        }
+                        $item[$k] = json_decode($subItem, true);
+                    }
+                    $body[$i] = $item;
+                }
+            }
+        } else {
+            /** @var string $content */
+            $content = $request->getContent();
+            $body = json_decode($content, true);
+        }
         /** @var array<string>|null $body */
-        $body = json_decode($content, true);
-
         if (is_null($body)) {
             throw new \InvalidArgumentException('Body is not a valid JSON', 400);
         }

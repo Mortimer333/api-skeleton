@@ -58,7 +58,7 @@ class JWSService extends JWTServiceAbstract
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($sigJWK, $this->addRequiredToHeader(['alg' => $signatureAlgorithm]))
+            ->addSignature($sigJWK, $this->addRequiredToHeader((int) $user->getId(), ['alg' => $signatureAlgorithm]))
             ->build();
 
         return (new CompactSerializer())->serialize($jws, 0);

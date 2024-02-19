@@ -46,7 +46,7 @@ class JWTNestedService extends JWTServiceAbstract
             $payload,
             [[
                 'key' => $sigJWK,
-                'protected_header' => $this->addRequiredToHeader(['alg' => $_ENV['JWT_SINGNATURE_ALGORITHM']]),
+                'protected_header' => $this->addRequiredToHeader(0, ['alg' => $_ENV['JWT_SINGNATURE_ALGORITHM']]),
             ]],
             'jws_compact',
             ['alg' => $_ENV['JWT_ENCRYTPION_ALGORITHM'], 'enc' => $_ENV['JWT_CONTENT_ENCRYTPION_ALGORITHM']],
@@ -58,10 +58,10 @@ class JWTNestedService extends JWTServiceAbstract
         );
 
         // Decryption of nested token takes about 2s, saving assigned payload to cache for quicker response on read,
-        // also this works as `exp` becuase `expiries` checker for nested doesn't work
+        // also this works as `exp` because `expires` checker for nested doesn't work
         $cachedNestedTokenPayload = $this->cache->getItem($this->getNestedTokenCacheKey($token))
-                    ->set($payload)
-                    ->expiresAfter($this->httpUtilService->getTokenExpTimeSeconds())
+            ->set($payload)
+            ->expiresAfter($this->httpUtilService->getTokenExpTimeSeconds())
         ;
         $this->cache->save($cachedNestedTokenPayload);
 

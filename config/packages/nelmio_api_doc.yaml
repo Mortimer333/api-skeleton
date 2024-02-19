@@ -6,7 +6,7 @@ nelmio_api_doc:
             - ^api\_
     documentation:
         info:
-            title: Board Meister Internal API
+            title: API Skeleton
             description:
             version: 0.0.1
         security:

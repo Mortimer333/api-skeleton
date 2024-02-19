@@ -1,5 +1,7 @@
 doctrine:
     dbal:
+        options:
+            1002: 'SET sql_mode=(SELECT REPLACE(@@sql_mode, "ONLY_FULL_GROUP_BY", ""))'
         url: '%env(resolve:DATABASE_URL)%'
 
         # IMPORTANT: You MUST configure your server version,
@@ -9,6 +11,8 @@ doctrine:
         auto_generate_proxy_classes: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         auto_mapping: true
+        report_fields_where_declared: true
+        enable_lazy_ghost_objects: true
         mappings:
             App:
                 is_bundle: false
@@ -18,9 +22,14 @@ doctrine:
 
 when@test:
     doctrine:
-        dbal:
-            # "TEST_TOKEN" is typically set by ParaTest
-#            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
+        orm:
+            mappings:
+                Test:
+                    is_bundle: false
+                    type: attribute
+                    dir: '%kernel.project_dir%/src/Entity/Test'
+                    prefix: 'App\Entity\Test'
+                    alias: Test
 
 when@prod:
     doctrine:

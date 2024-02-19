@@ -4,14 +4,22 @@ parameters:
     checkGenericClassInNonGenericObjectType: false
     level: 8
     excludePaths:
-      - tests/_*/
+      - Tests/_*/
+      - Tests/Support/
       - src/Model/
     ignoreErrors:
-      - '#unknown class App\\Tests\\UnitTester#'
-#      - '#invalid type App\\Tests\\UnitTester#'
-      - '#unknown class App\\Tests\\IntegrationTester#'
-#      - '#invalid type App\\Tests\\IntegrationTester#'
-      - '#unknown class App\\Tests\\ApiTester#'
-      - '#invalid type App\\Tests\\ApiTester#'
-#      - '#does not accept PHPUnit\\Framework\\MockObject\\MockObject#'
-#      - '#Doctrine\\Common\\Collections\\Collection but database expects Doctrine\\Common\\Collections\\Collection&iterable#'
+      -
+        message: '#Call to an undefined method App\\Tests\\Support\\IntegrationTester::#'
+        reportUnmatched: false
+      -
+        message: '#Call to an undefined method App\\Tests\\Support\\ApiTester::#'
+        reportUnmatched: false
+      -
+        message: '#Call to an undefined method App\\Tests\\Support\\ApiTester::#'
+        reportUnmatched: false
+      -
+        message: '#Call to an undefined method App\\Tests\\Support\\UnitTester::#'
+        reportUnmatched: false
+      -
+        message: '#Call to an undefined method App\\Tests\\Support\\UnitTester::#'
+        reportUnmatched: false

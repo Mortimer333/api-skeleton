@@ -22,3 +22,7 @@
 ###> phpstorm ###
 .idea/
 ###< phpstorm ###
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###

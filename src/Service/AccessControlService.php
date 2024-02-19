@@ -6,17 +6,18 @@ namespace App\Service;
 
 use App\Contract\NotDoubleSubmitAuthenticatedController;
 use App\Contract\NotTokenAuthenticatedController;
-use App\Entity\User;
 use App\Service\Util\BinUtilService;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\Security\Core\Security;
 
 class AccessControlService
 {
     public function __construct(
         protected Security $security,
         protected BinUtilService $baseUtilService,
+        protected RequestStack $requestStack,
     ) {
     }
 
@@ -31,10 +32,17 @@ class AccessControlService
         $this->validateRoutesAccess($request->getPathInfo());
     }
 
+    public function isSwaggerRequest(): bool
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $this->baseUtilService->isDev() && $request && $request->headers->get('X-Swagger');
+    }
+
     protected function validateRoutesAccess(string $path): void
     {
         if (preg_match('/^\/(_\/user)/', $path)) {
-            /** @var ?User $user */
+            /** @var ?\App\Entity\User $user */
             $user = $this->security->getUser();
             if (null === $user) {
                 throw new AccessDeniedHttpException('You need to be logged in to access this resource');
@@ -63,21 +71,15 @@ class AccessControlService
 
     protected function validateCSRFAttack(object $controller, Request $request): void
     {
-        $content = json_decode($request->getContent(), true);
+        $cookieToken = $request->cookies->get('CSRF-Token');
 
-        $res = ( // If Swagger request
-                (
-                    $this->baseUtilService->isDev()
-                    && !$request->headers->get('X-Swagger')
-                )
-                || !$this->baseUtilService->isDev()
-            )
-            && !$controller instanceof NotDoubleSubmitAuthenticatedController
-            && !in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])
-            && (
-                !$request->headers->get('x-csrf-token')
-                || !isset($content['CSRF-Token'])
-                || $request->headers->get('x-csrf-token') !== $content['CSRF-Token']
+        $res = (!$this->isSwaggerRequest() || !$this->baseUtilService->isDev())       // is not swagger request on dev
+            && !$controller instanceof NotDoubleSubmitAuthenticatedController         // is double submit check control
+            && !in_array($request->getMethod(), ['GET', 'HEAD', 'OPTIONS'])           // is change data request
+            && (                                                                      // doesn't have csrf token or
+                !$request->headers->get('x-csrf-token')                               //    tokens don't match
+                || !isset($cookieToken)
+                || $request->headers->get('x-csrf-token') !== $cookieToken
             );
 
         if ($res) {

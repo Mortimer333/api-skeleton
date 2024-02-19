@@ -15,7 +15,7 @@ class DevPurger extends AbstractPurger
 
         $connection->beginTransaction();
 
-//        $this->truncate([entity]);
+        //        $this->truncate([entity]);
 
         $connection->commit();
         $connection->beginTransaction();

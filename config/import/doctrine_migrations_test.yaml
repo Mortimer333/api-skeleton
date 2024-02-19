@@ -1,0 +1,6 @@
+doctrine_migrations:
+    migrations_paths:
+        # Keep those migrations paths in this order, so new generated migrations go to migrations/test
+        # instead of just migrations/ which would add them to the dev/prod namespace
+        'DoctrineMigrations\Test': '%kernel.project_dir%/migrations/test'
+        'DoctrineMigrations': '%kernel.project_dir%/migrations'

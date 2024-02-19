@@ -13,11 +13,16 @@ help:
 		@echo "integration-test             Run integration tests"
 		@echo "api-test                    Run integration tests"
 		@echo "test-all                    Run all tests"
+		@echo "single-test                 Run single test"
 		@echo ""
 
 		@echo "before-push                 Run before pushing changes to origin"
 		@echo "migrate                     Run migrations"
 		@echo "reset-test-env              Purges test DB and repopulates it with fixtures"
+		@echo ""
+
+		@echo "entity                      Create entity"
+		@echo "entity-test                 Create entity in test namespace"
 		@echo ""
 
 cs-check:
@@ -28,20 +33,19 @@ cs-fix:
 	@echo "Fix coding standards"
 	php vendor/bin/php-cs-fixer fix \
 	src/ \
-	tests/_support/factories/ \
-	tests/_support/Helper/ \
-	tests/_support/ApiTester.php \
-	tests/_support/IntegrationTester.php \
-	tests/_support/UnitTester.php \
-	tests/Api \
-	tests/Integration \
-	tests/Unit \
+	Tests/Support/Helper/ \
+	Tests/Support/ApiTester.php \
+	Tests/Support/IntegrationTester.php \
+	Tests/Support/UnitTester.php \
+	Tests/Api \
+	Tests/Integration \
+	Tests/Unit \
 	migrations/ \
 	--verbose --config=.php-cs-fixer.dist.php
 
 phpstan:
 	@echo "Runing PHPStan"
-	php -d memory_limit=4G vendor/bin/phpstan --xdebug analyse src tests
+	php -d memory_limit=4G vendor/bin/phpstan analyse src Tests migrations
 
 psalm:
 	@echo "Runing Psalm"
@@ -80,6 +84,9 @@ test-all:
 	$(MAKE) integration-test
 	$(MAKE) api-test
 
+single-test:
+	bash ./dev/run_single_test.sh $(filter-out $@,$(MAKECMDGOALS))
+
 before-push:
 	$(MAKE) cs-fix
 	$(MAKE) analysis
@@ -105,3 +112,9 @@ tests-build:
 fix-test-permissions:
 	@echo "Fix permissions to files in var folder"
 	chown -R www-data var/
+
+entity:
+	php bin/console make:entity \\Shared\\Entity\\Api\\$(filter-out $@,$(MAKECMDGOALS))
+
+entity-test:
+	APP_ENV=test php bin/console make:entity \\Shared\\Entity\\Test\\$(filter-out $@,$(MAKECMDGOALS))

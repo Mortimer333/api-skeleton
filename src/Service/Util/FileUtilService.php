@@ -6,6 +6,39 @@ namespace App\Service\Util;
 
 class FileUtilService
 {
+    public const FILE_TO_TYPE = [
+        'application/json' => 'json',
+    ];
+
+    public const IMAGE_MIME_TYPE = [
+        'image/png',
+        'image/jpg',
+        'image/jpeg',
+        'image/webp',
+    ];
+
+    public const ALLOWED_MIME_TYPE = [
+        'image/png' => 'png',
+        'image/jpg' => 'jpg',
+        'image/jpeg' => 'jpeg',
+        'image/webp' => 'webp',
+        'application/json' => 'json',
+    ];
+
+    public static function extToType(string $mime): string
+    {
+        if (in_array($mime, self::IMAGE_MIME_TYPE)) {
+            return 'image';
+        }
+
+        return self::FILE_TO_TYPE[$mime] ?? 'unknown';
+    }
+
+    public static function isJson(string $text): bool
+    {
+        return (bool) json_decode($text);
+    }
+
     /**
      * @param string $path   Absolute path to the file
      * @param int    $cursor Where to start in bytes
@@ -16,7 +49,7 @@ class FileUtilService
      *                                          - 1 => Position of the cursor (in bytes)
      *                                          - 2 => The amount of read lines
      */
-    public function readLines(string $path, int $cursor = 0, int $amount = 10): array
+    public static function readLines(string $path, int $cursor = 0, int $amount = 10): array
     {
         $content = '';
 
@@ -45,7 +78,7 @@ class FileUtilService
         return [$content, $cursor, $addedLines];
     }
 
-    public function deleteDir(string $dir): void
+    public static function deleteDir(string $dir): void
     {
         if (!is_dir($dir)) {
             throw new \Exception("Passed directory doesn't exist", 500);
@@ -63,5 +96,17 @@ class FileUtilService
             }
         }
         rmdir($dir);
+    }
+
+    public static function humanFilesize(int $bytes, int $decimals = 2): string
+    {
+        $sizes = 'BKMGTP';
+        $factor = (int) floor((strlen((string) $bytes) - 1) / 3);
+        $size = $sizes[$factor] ?? '-';
+        if ('B' != $size && '-' != $size) {
+            $size .= 'B';
+        }
+
+        return sprintf("%.{$decimals}f", $bytes / pow(1000, $factor)) . ' ' . $size;
     }
 }

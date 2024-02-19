@@ -14,7 +14,6 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 abstract class BaseCommandAbstract extends Command
 {
-    /** @var SymfonyStyle */
     protected ?SymfonyStyle $io = null;
 
     /** @var array<array<string, string>> $warnings Warnings to display at the end of process */
